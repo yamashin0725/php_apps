@@ -1,4 +1,5 @@
 <?php
 
 echo "hello world";
-echo "yamazaki shinichiro"
+echo "yamazaki shinichirio"
+echo "php lessons"
