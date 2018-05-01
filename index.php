@@ -1,5 +1,13 @@
 <?php
 
-echo "hello world\n";
-echo "yamazaki shinichirio\n";
-echo "2018/04/21\n";
+# Hello comment
+echo "hello from the TOP!";
+
+?>
+
+<!DOCTYPE html>
+<html lang="ja">
+<body>
+    <p>Hello World <?php echo " from PHP"; ?></p>
+</body>
+</html>
