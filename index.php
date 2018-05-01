@@ -2,6 +2,7 @@
 
 # Hello comment
 echo "hello from the TOP!";
+echo "hello from the TOP! again";
 
 ?>
 
