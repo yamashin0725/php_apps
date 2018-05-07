@@ -1,0 +1,280 @@
+#03 PHPプログラム
+    - <?php   で開始
+    - ?>      で終了
+    - html文を埋め込むことが可能
+    - // 単行コメント
+    - # 単行コメント
+    - /* 複行コメント */
+
+#03 ビルトインWebサーバ
+    ip a                        //ローカル開発環境のサーバipアドレスを表示させる
+    php -S xxx.xxx.xx.xx:oooo   //ip -> xxx.xxx.xx.xx / port -> oooo　でファイルにアクセスできるようにする
+
+
+#04 変数とデータ型
+
+    変数：データにつけるラベル
+        - $name = shinichiro_yamazaki
+        - 推定型
+        
+    データ型：
+        - 文字列 string
+        - 数値 integer float
+        - 論理値 boolean / true false
+        - 配列
+        - オブジェクト
+        - null
+        
+#05 定数
+    
+    定数：変更されない値につけるラベル
+        - define("name", "yamazaki_shinichiro");
+        - echo name;
+        - var_dump(__LINE__);   ->  現在の行数を表示
+        - var_dump(__FILE__);   ->  現在のファイルを表示
+        - var_dump(__DIR__);    ->  現在のディレクトリを表示
+        
+#06 数値の演算
+    
+    演算子
+        - + * / % **(PHP5.6~)
+    単項演算子
+        ++ --
+        += -= *= /=
+        
+#07 文字列
+
+    文字列
+        - "" 特殊文字(\n, \t)　変数
+        - ''
+    
+        $name = "yamazaki";
+        $s1 = "hello $name!\nhello again";
+        $s1 = "hello {$name}!\nhello again";
+        $s1 = "hello ${name}!\nhello again";
+        $s2 = 'hello $name!\nhello again';
+        var_dump($s1);  //'hello yamazaki!
+                        // hello again'
+        var_dump($s2);  //'hello $name!\nhello again'
+    
+    連結 .
+        $s = "hello " . "world";
+        var_dump($s);   //'hello world';
+        
+#08 if文
+    
+    if 条件分岐
+        $score = 85;
+        if($score > 80){
+            echo "great!";
+        } elseif($score > 60){
+            echo "good"!;
+        }else {
+            echo "so so ...";
+        }
+        
+    比較演算子
+        > < >= <= ==(値の比較) ===(値とデータの型の比較) != !==
+    
+    論理演算子
+        and &&, or ||, not !
+        
+#09 真偽値
+
+    真偽値
+        falseになる場合
+         - 文字列   ：空, "0"
+         - 数値     ：0, 0.0
+         - 論理値   ：false
+         - 配列     ：要素の数が0
+         - null
+        
+        $x = 5;
+        //if($x){
+        if($x == true){
+            echo "great";
+        }
+        
+    三項演算子
+        $max = ($a > $b) ? &a : &b;
+        
+        if($a > $b){
+            $max = $a;
+        } else {
+            $max = $b;
+        }
+        
+#10 switch文
+    
+    $signal "red";
+    
+    switch($signal){
+    case "red":
+        echo "stop!";
+        break;
+    case "green":
+    case "blue":
+        echo "go!";
+        break;
+    case "yellow":
+        echo "caution!";
+        break;
+    default:
+        echo "wrong signal"
+        break;
+    }
+    
+#11 while文
+
+    ループ処理
+     - while文(前判定)
+        $i =  0;
+        while($i < 10){
+            echo $i;
+            $i++;
+        }
+        
+    - do ... while文(後ろ判定)
+        $i =  0;
+        do{
+            echo $i;
+            $i++;
+        }while($i < 10);
+        
+#12 for文
+
+    ループ処理
+     - for文
+        for($i = 0; $i < 10 ; $i++){
+            echo $i
+        }
+        
+     - break    ：ループを抜ける
+     - continue ：それ以降の処理を実行せずに次のループに移る
+
+#13 配列
+    
+    配列
+    - key value
+        $sales = array(
+            "yamazaki" => 300,
+            "kobayashi" => 200,
+            "kinoshita" => 100,
+        );
+
+    -PHP5.4
+        $sales = [
+            "yamazaki" => 300,
+            "kobayashi" => 200,
+            "kinoshita" => 100,
+        ];
+        
+        var_dump($sales["yamazaki"]);   //300
+        $sales["yamazaki"] = 1000;
+        var_dump($sales["yamazaki"]);   //1000
+        
+        $colors = ["red", "pink", "blue"];
+        var_dump($colors[1]);           //pink
+        
+#14 foreach
+
+    - foreach文
+        $sales = [
+            "yamazaki" => 300,
+            "kobayashi" => 200,
+            "kinoshita" => 100,
+        ];
+        
+        foreach($sales as $key => $value){
+            echo "($key) $value";
+        }
+        
+        $colors = ["red", "pink", "blue"];
+        
+        foreach($colors as $value){
+            echo "$value";
+        }
+    
+    - コロン構文(for foreach while if)
+        foreach($colors as $value) : 
+            echo "$value ";
+        endforeach;
+        
+        <ul>
+            <?php foreach ($colors as $value) : ?>
+            <li><?php echo "$value "; ?></li>
+            <?php endforeach; ?>
+        </ul>
+        
+#15 関数
+
+    function sayHi($name = "yamazaki"){
+        //echo "hi! " . $name;
+        return "hi! " . $name;
+    }
+    
+    //sayHi("Tom");
+    //sayHi("Bob");
+    //sayHi();
+    
+    $s = sayHi();
+    var_dump($s);
+    
+#16 ローカル変数
+
+    $lang = ruby
+
+    function sayHi($name = "yamazaki"){
+        $lang = "php"                   //use only in sayHi
+        echo "hi! $name from $lang";
+    }
+    
+    sayHi("Tom")
+    var_dump($lang) // ruby
+    
+#17 組み込み関数
+
+    - ceil($x)          ：小数点以下切り上げした値を返す
+    - floor($x)         ：小数点以下切り捨てした値を返す
+    - round($x)         ：小数点以下四捨五入した値を返す
+    - rand(1, 10)       ：1~10で生成した乱数を返す
+    
+    - strlen($str)      ：文字列の長さを返す
+    - mb_strlen($str)   ：マルチバイト文字列の長さを返す
+    
+    - printf("%s - %s - %.3f", %s1, %s2, %x)    ：書式を指定して表示
+    
+    - count(%colors)        ：配列の要素数を返す
+    - implode("@", $colors) ：配列の要素をある区切り文字で連結した文字列を返す
+    
+#18 クラスとインスタンス
+
+    - クラス
+        プロパティ      ：クラスが持つ変数
+        メソッド        ：クラスが持つ関数
+        インスタンス    ：クラスをもとに実際にデータを持たせたオブジェクトのこと
+        コンストラクタ  ：クラスがインスタンスを作る時に必ず実行するメソッド
+        
+#19 クラスの作成
+    
+    class User {
+        //property
+        public $name;
+        
+        //constructor
+        public function __construct($name) {
+            $this->name = $name;
+        }
+        
+        //method
+        public function sayHi(){
+            echo "hi, i am $htis->name!";
+        }
+    
+    }
+    
+    $tom = new User("Tom");
+    $bob = new User("Bob");
+    
+    echo $tom->name;
+    $bob->sayHi();
