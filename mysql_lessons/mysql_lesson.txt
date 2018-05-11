@@ -1,0 +1,44 @@
+id : dbuser01
+pass : yamashin
+
+///////コマンド一覧///////
+
+mysql -u <user> -p <database>
+・<user>としてログイン
+・オプションでpassの設定
+・オプションで<database>の選択
+
+mysql -u <user> < <sql_file>
+・<user>として<sql_file>を実行
+
+
+///////クエリ一覧///////
+
+show databases;
+・データベースの一覧表示
+
+select user();
+・user名を表示
+
+select database();
+・現在使用しているデータベースの表示
+
+create database <database>;
+・データベースの作成
+
+drop database <database>;
+・データベースの削除
+
+use mydb02;
+・使用するデータベースの選択
+
+create user <username>@<ログイン元> identified by '<pass>';
+create user dbuser01@localhost identified by 'yamashin';
+．user名：<username>dbuser01, pass:<pass>yamashinでuserを作成
+
+grant all on mydb01.* to dbuser01@localhost;
+・mydb01のすべてのテーブルに関するすべての権限をdbuser01に与える
+
+\. <file>
+source <file>
+・sqlファイルを読み込む
