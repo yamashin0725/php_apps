@@ -1,12 +1,78 @@
 id : dbuser01
 pass : yamashin
 
+///////データベース用語///////
+
+データベース<DB>
+    - テーブル<table>
+        - フィールド<field>／列<column>
+        - レコード<record>／行<row>
+
+<table>
+    +----------+-----------+----------+
+    | <field>  | <field>   | <field>  |
+    +----------+-----------+----------+
+    | <record> | <record>  | <record> |
+    | <record> | <record>  | <record> |
+    | <record> | <record>  | <record> |
+    +----------+-----------+----------+
+
+///////データ型///////
+nuber
+    - int
+    - float
+    - double
+    - int unsigned      //＋のみのint型
+    
+string:
+    - char(<num>)       //固定長
+    - varchar(<num>)    //可変長
+    - text
+    
+date/time:
+    - date
+    - time
+    - datetime          //'2017-07-22 17:22:33'
+
+true/false:
+    - boolean -> tinyint(1)
+        true -> 1
+        false -> 0
+
+enum
+    - enum(<item1>, <item2>, ...)   //1つのアイテムを持つ
+        <item1> = 1
+        <item2> = 2
+        <item2> = 3
+    - set(<item1>, <item2>, ...)    //複数のアイテムを持つ
+        <item1> = 2**0=1
+        <item2> = 2**1=2
+        <item3> = 2**2=4
+        
+
+num calculation
+    - + - * / %
+    - round(5.355);     -- 5
+    - round(5.355, 1);  -- 5.4
+    - floor(5.855);     -- 5
+    - ceil(5.355);      -- 6
+    - rand();           -- 0.0~1.0
+    
+string calculation
+    -- length('Hello');         -- 5
+    -- substr('Hello', 2);      -- ello
+    -- substr('Hello', 2, 3);   -- ell
+    -- upper('Hello');          -- HELLO
+    -- lower('Hello');          -- hello
+    -- concat('hello', 'World');-- Helloworld
+
+
 ///////コマンド一覧///////
 
-mysql -u <user> -p <database>
+mysql -u <user> -p <DB>
 ・<user>としてログイン
 ・オプションでpassの設定
-・オプションで<database>の選択
+・オプションで<DB>の選択
 
 mysql -u <user> < <sql_file>
 ・<user>として<sql_file>を実行
@@ -14,31 +80,130 @@ mysql -u <user> < <sql_file>
 
 ///////クエリ一覧///////
 
-show databases;
-・データベースの一覧表示
-
 select user();
 ・user名を表示
 
-select database();
+show DBs;
+・データベースの一覧表示
+
+select DB();
 ・現在使用しているデータベースの表示
 
-create database <database>;
+create DB <DB>;
 ・データベースの作成
 
-drop database <database>;
+drop DB <DB>;
 ・データベースの削除
 
 use mydb02;
 ・使用するデータベースの選択
 
-create user <username>@<ログイン元> identified by '<pass>';
-create user dbuser01@localhost identified by 'yamashin';
-．user名：<username>dbuser01, pass:<pass>yamashinでuserを作成
+create user <user>@<path> identified by '<pass>';
+・user名：<user>, pass:<pass>でuserを作成
+・Ex)
+    create user dbuser01@localhost identified by 'yamashin';
 
-grant all on mydb01.* to dbuser01@localhost;
-・mydb01のすべてのテーブルに関するすべての権限をdbuser01に与える
+grant all on <DB>.* to <user>@<path>;
+・<DB>のすべてのテーブルに関するすべての権限を<user>に与える
+・Ex)
+    grant all on mydb01.* to dbuser01@localhost;
 
 \. <file>
 source <file>
-・sqlファイルを読み込む
+・ファイルを読み込む
+
+create table <table> (
+    <field> <type> <option>,
+    <field> <type> <option>
+);
+・<table>でtableを作成する．
+・<フィールド名> <型> <オプション>で記述
+・<オプション>
+    primary key     : 主keyの設定
+    auto_increment  : (主key)自動的に連番に設定
+    unique          : 重複を許可しない
+    default <value> : default値を<value>に設定
+    not null        : nullを許可しない
+・Ex)
+    create table usets (
+        id int unsigned primary key auto_increment,
+        name varchar(20) unique,
+        score float not null
+    );
+    
+show tables;
+・テーブルの一覧表示
+
+desc <table>;
+・<table>の構造の確認
+
+drop tables <table>;
+・現在選択しているDBから<table>を削除
+
+insert into <table>(<field>, <field>, <field>) values
+    (<record>, <record>, <record>),
+    (<record>, <record>, <record>);
+・テーブルにレコードを挿入
+・Ex)
+    insert into users(id, name, score) values
+        (2, 'kinoshita', 2.2),
+        (3, 'kobayashi', 3.3),
+        (4, 'kurima', null);
+
+alter table <table> <command>
+    alter table <table> add column <field> <type> <option>; 
+    ・<table>にフィールド(<field> <type> <option>)を追加
+    ・<option>
+        after <exist_field> : <exist_field>の後に<field>を追加
+    ・Ex)
+        alter table users add column email varchar(255);
+        
+    alter table <table> drop column <field>;
+    ・<table>から<field>を削除
+    ・Ex)
+        alter table users drop column score;
+    
+    alter table <table> change <exist_field> <field> <default> <option>;
+    ・<table>の<exist_field>をフィールド(<field> <default> <option>)に変更
+    ・Ex)
+        alter table users change name user_name varchar(80) default 'nobody';
+        
+    alter table <table> rename <new_table>;
+    ・<table>の名前を<new_table>に変更
+    ・Ex)
+        alter table users rename persons;
+        
+select <field> as <columnname> from <table> where <option> order by <option>
+・レコードの選択
+    as      : フィールドの名前を<columnname>に変更
+
+    from    : フィールドを<table>から選択
+        -- *(all)
+        -- <field1>,<field2>
+
+    where   : フィールドを選択する<option>を設定
+        -- < > <= >= = <> !=
+        -- is null, is not null
+        -- and or not
+        -- between <num1> and <num2>    : <num1>以上<num2>以下のレコードを返す  
+        -- in(<record1>,<record2>,...)  : 含まれているレコードを返す
+        -- like <str>                   : <str>(<enum>,<set>)との部分一致を行う
+            binary  : 大文字と小文字の区別を行う
+            %       : 1文字以上の任意の文字列
+            _       : 1文字の任意の文字列
+            
+    order by: フィールドを<option>でソート
+        -- desc         : 降順に変更
+        -- rand()       : ランダム順に変更
+        -- limit <num>  : 最初から<num>件分表示
+        -- offset <num> : 最初から<num>件分省略
+        
+update <table> set <field> = <record>, <field> = <record>, ...  where <option>
+・レコードの更新
+
+delete from <table> when <option>
+・レコードの削除
+
+
+
+
