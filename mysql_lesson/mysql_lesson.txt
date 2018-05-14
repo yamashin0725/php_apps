@@ -1,10 +1,12 @@
-id : dbuser01
+user : myapp_user
+db : myapp
 pass : yamashin
 
 ///////データベース用語///////
 
 データベース<DB>
     - テーブル<table>
+    - ビュー<view>
         - フィールド<field>／列<column>
         - レコード<record>／行<row>
 
@@ -83,10 +85,10 @@ mysql -u <user> < <sql_file>
 select user();
 ・user名を表示
 
-show DBs;
+show databases;
 ・データベースの一覧表示
 
-select DB();
+select database();
 ・現在使用しているデータベースの表示
 
 create DB <DB>;
@@ -130,6 +132,26 @@ create table <table> (
         name varchar(20) unique,
         score float not null
     );
+
+create table <table> <option>
+・すでに存在するテーブルからテーブルを作成
+・asでレコードのコピー
+・Ex)
+    create table users_with_team as
+    select
+        id,
+        name,
+        score,
+        case
+            when score > 4.0 then 'team-A'
+            when score > 2.0 then 'team-B'
+            else 'team-C'
+        end as team
+    from
+        users;
+・likeでフィールドのコピー
+・Ex)
+    create table users_empty like users;
     
 show tables;
 ・テーブルの一覧表示
@@ -151,32 +173,45 @@ insert into <table>(<field>, <field>, <field>) values
         (4, 'kurima', null);
 
 alter table <table> <command>
-    alter table <table> add column <field> <type> <option>; 
+・<command>
+    add column <field> <type> <option>; 
     ・<table>にフィールド(<field> <type> <option>)を追加
     ・<option>
         after <exist_field> : <exist_field>の後に<field>を追加
     ・Ex)
-        alter table users add column email varchar(255);
-        
-    alter table <table> drop column <field>;
+        alter table users add column email varchar(255) after name;
+    
+    drop column <field>;
     ・<table>から<field>を削除
     ・Ex)
         alter table users drop column score;
     
-    alter table <table> change <exist_field> <field> <default> <option>;
+    change <exist_field> <field> <default> <option>;
     ・<table>の<exist_field>をフィールド(<field> <default> <option>)に変更
     ・Ex)
         alter table users change name user_name varchar(80) default 'nobody';
         
-    alter table <table> rename <new_table>;
+    rename <new_table>;
     ・<table>の名前を<new_table>に変更
     ・Ex)
         alter table users rename persons;
         
-select <field> as <columnname> from <table> where <option> order by <option>
+    add index <index> (field)
+    ・<field>にインデックス<index>を設定
+    
+    drop index <index>
+    ・<table>からインデックス<index>を削除
+    
+    add constraint <foreign_key> foreign key (<field1>) references <table2> (<field2>);
+    ・<table>の<field1>に外部キー制約<foreign_key>を設定
+    
+    drop foreign key <foreign_key>;
+    ・<table>の外部キー制約<foreign_key>を削除
+        
+select <field> as <columnname> from <table> where <option> order by <option> group by <field>
 ・レコードの選択
     as      : フィールドの名前を<columnname>に変更
-
+    
     from    : フィールドを<table>から選択
         -- *(all)
         -- <field1>,<field2>
@@ -198,12 +233,104 @@ select <field> as <columnname> from <table> where <option> order by <option>
         -- limit <num>  : 最初から<num>件分表示
         -- offset <num> : 最初から<num>件分省略
         
+    group by: レコードを<field>でグルーピング
+        -- desc                 : 降順に変更
+        -- having <condition>   : グループに対して<condition>で条件付け（≠ where）
+        
 update <table> set <field> = <record>, <field> = <record>, ...  where <option>
 ・レコードの更新
 
 delete from <table> when <option>
 ・レコードの削除
 
+create view <view> as <select文>
+・抽出条件の作成
+・テーブルと同様に扱うことが可能
+
+show create view <view>
+・抽出条件の表示
+
+start transaction
+・トランザクションの開始
+
+commit;
+・トランザクション中の処理をまとめて実行
+
+rollback;
+・トランザクション中の処理を破棄
+
+show index from <table>;
+・<table>のインデックスを表示
+
+explain select <field> from <table> where <option>;
+・<field>の索引方法を表示
+
+select <field> from <table1> (inner) join <table2> on <condition>;
+・<condition>の条件に合致するレコードのみを結合した結合テーブルを作成する
+・内部結合
+
+select <field> from <table1> left (outer) join <table2> on <condition>;
+・<table1>を基準に<condition>の条件に合致するレコードを結合した結合テーブルを作成する
+
+select <field> from <table1> right (outer) join <table2> on <condition>;
+・<table2>を基準に<condition>の条件に合致するレコードを結合した結合テーブルを作成する
+
+create trigger <trigger> <condition> <command>;
+・<condition>の条件時に<command>を行うトリガー<trigger>を作成する
+・Ex)
+    -- postsにinsertが行われた後にlogsのmsgに'post added!'を挿入する
+    create trigger posts_insert_trigger after insert on posts for each row insert into logs (msg) values ('post added!');
+    
+    
+    -- postsにupdateが行われた後にlogsのmsgに'post added!'と変更を挿入する
+    delimiter //
+    create trigger posts_update_trigger after update on posts for each row
+        begin
+            insert into logs (msg) values ('post updated!');
+            insert into logs (msg) values (concat(old.title, '->', new.title));
+        end;
+    //
+    delimiter ;
+
+show triggers;
+・現在設定されているトリガーを表示する
 
 
+///////記述文法///////
+・条件記述
+    -- if/case : 条件の記述
+    -- select文ではas を伴って新規fieldとして表示
+        if(score > 5.0, 'OK', 'NG') as result
+        
+        case floor(score) % 2
+            when 0 then 'even'
+            when 1 then 'odd'
+            else null
+        end as type
+
+・集計処理
+    -- count()                  : アイテム数を返す
+    -- sum() min() max() avg()  : 数値処理した結果を返す
+    -- distinct()               : 重複を排除した結果を返す
+
+・更新処理
+    -- last_insert_id()         : 直前に挿入したレコードのidを返す
+
+・サブクエリ
+    select 
+        sum(t.score),
+        t.team
+    from
+        (select
+            id,
+            name,
+            score,
+            case
+                when score > 4.0 then 'team-A'
+                when score > 2.0 then 'team-B'
+                else 'team-C'
+            end as team
+        from
+            users) as t
+    group by t.team;
 

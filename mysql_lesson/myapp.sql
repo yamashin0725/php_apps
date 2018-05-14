@@ -1,23 +1,37 @@
-drop table if exists users;
-create table users (
+drop table if exists posts;
+create table posts (
     id int unsigned primary key auto_increment,
-    name varchar(20),
-    score float,
-    coins set('gold', 'silver', 'bronze')
+    title varchar(255),
+    body text
 );
 
-insert into users (name, score, coins) values ('Yamazaki', 1.4, 'gold,silver');
-insert into users (name, score, coins) values ('Kobayashi', 3.7, 'bronze,gold');
-insert into users (name, score, coins) values ('Kinoshita', 0.3, 'silver');
-insert into users (name, score, coins) values ('Kurima', 8.5, 'gold,red');
-insert into users (name, score, coins) values ('Uchida', null, 'gold');
-insert into users (name, score, coins) values ('Funayama', 3.5, 'red');
-insert into users (name, score, coins) values ('Mikata', 4.2, 'silver');
+drop table if exists logs;
+create table logs (
+    id int unsigned primary key auto_increment,
+    msg varchar(255)
+);
 
--- select * from users where coins = 'silver';
--- select * from users where coins = 2;
--- select * from users;
 
-select * from users where coins = 'gold,silver';
-select * from users where coins = 3;
-select * from users where coins like '%gold%';
+drop trigger if exists posts_update_trigger;
+drop trigger if exists posts_insert_trigger;
+delimiter //
+create trigger posts_update_trigger after update on posts for each row
+    begin
+        insert into logs (msg) values ('post updated!');
+        insert into logs (msg) values (concat(old.title, '->', new.title));
+    end;
+//
+
+delimiter ;
+
+insert into posts(title, body) values ('title 1', 'body 1');
+insert into posts(title, body) values ('title 2', 'body 2');
+insert into posts(title, body) values ('title 3', 'body 3');
+
+update posts set title = 'title 2 updated' where id = 2;
+
+select * from posts;
+select * from logs;
+
+
+-- show triggers \G
