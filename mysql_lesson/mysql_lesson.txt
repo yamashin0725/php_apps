@@ -71,6 +71,11 @@ string calculation
 
 ///////コマンド一覧///////
 
+mysql-ctl start
+
+sudo service mysql start
+・mysqlサーバの立ち上げ
+
 mysql -u <user> -p <DB>
 ・<user>としてログイン
 ・オプションでpassの設定
@@ -91,13 +96,13 @@ show databases;
 select database();
 ・現在使用しているデータベースの表示
 
-create DB <DB>;
+create database <DB>;
 ・データベースの作成
 
-drop DB <DB>;
+drop database <DB>;
 ・データベースの削除
 
-use mydb02;
+use <DB>;
 ・使用するデータベースの選択
 
 create user <user>@<path> identified by '<pass>';
