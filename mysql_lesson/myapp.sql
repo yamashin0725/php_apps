@@ -13,11 +13,4 @@ insert into posts (title, body) values ('title 3', 'body 3');
 
 update posts set created = '2016-12-31 10:00:00' where id = 2;
 
--- select * from posts;
--- select * from posts where created > '2017-01-01';
--- select created, date_add(created, interval 14 day) from posts;
--- select created, date_add(created, interval 2 week) from posts;\
-
 select created, date_format(created, '%W %M %Y') from posts;
-
--- show triggers \G
