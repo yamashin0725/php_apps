@@ -11,6 +11,4 @@ insert into posts (title, body) values ('title 1', 'body 1');
 insert into posts (title, body) values ('title 2', 'body 2');
 insert into posts (title, body) values ('title 3', 'body 3');
 
-update posts set created = '2016-12-31 10:00:00' where id = 2;
-
 select created, date_format(created, '%W %M %Y') from posts;
