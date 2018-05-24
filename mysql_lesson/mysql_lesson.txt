@@ -68,6 +68,11 @@ string calculation
     -- lower('Hello');          -- hello
     -- concat('hello', 'World');-- Helloworld
 
+date calculation
+    -- date_add(<date>, interval <num> day)
+       date_add(2018-05-24, interval 14 day)    -- 2018-06-07
+    -- date_format(<date>, '%W %M %Y')
+       date_format(2018-05-24, '%W %M %Y')      -- Thursday May 2018
 
 ///////コマンド一覧///////
 
